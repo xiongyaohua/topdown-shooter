@@ -1,0 +1,181 @@
+[gd_scene load_steps=7 format=3 uid="uid://dftaxyvi8c7gh"]
+
+[sub_resource type="GDScript" id="GDScript_elot1"]
+script/source = "extends CharacterBody2D
+
+
+@export var speed := 300.0
+@export var agility := 0.5
+@onready var player := $AnimationPlayer
+
+signal fire_bullet(transform: Transform2D)
+
+func _physics_process(delta):
+	update_movement()
+	update_rotation()
+	move_and_slide()
+
+func _unhandled_input(event):
+	if event.is_action_pressed(\"fire\"):
+		fire_bullet.emit()
+
+func update_movement():
+	var target_velocity := Vector2.ZERO
+	
+	if Input.is_action_pressed(\"up\"):
+		target_velocity += Vector2.UP
+	if Input.is_action_pressed(\"down\"):
+		target_velocity += Vector2.DOWN
+	if Input.is_action_pressed(\"left\"):
+		target_velocity += Vector2.LEFT
+	if Input.is_action_pressed(\"right\"):
+		target_velocity += Vector2.RIGHT
+	
+	target_velocity *= speed
+	velocity = lerp(velocity, target_velocity, agility)
+	
+	var speed_norm = velocity.length()
+	if speed_norm < 1.0:
+		player.play(\"RESET\")
+	else:
+		player.play(\"walk\")
+		player.playback_speed = velocity.length() / 80.0
+	
+func update_rotation():
+	look_at(get_global_mouse_position())
+	
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_egvc0"]
+radius = 8.0
+height = 46.0
+
+[sub_resource type="Animation" id="Animation_h7cao"]
+resource_name = "walk"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/FootLeft:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(5, 0), Vector2(0, 0), Vector2(-3, 0), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Body/FootRight:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-3, 0), Vector2(0, 0), Vector2(5, 0), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_sxluk"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.349066, 0.0, -0.349066, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_noef7"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Body/FootLeft:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Body/FootRight:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6fm66"]
+_data = {
+"RESET": SubResource("Animation_noef7"),
+"idle": SubResource("Animation_sxluk"),
+"walk": SubResource("Animation_h7cao")
+}
+
+[node name="Player" type="CharacterBody2D"]
+script = SubResource("GDScript_elot1")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_egvc0")
+metadata/_edit_lock_ = true
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.309804, 0.262745, 1, 1)
+polygon = PackedVector2Array(11, 0, 8, -16, 0, -24, -8, -16, -8, 16, 0, 24, 8, 16)
+metadata/_edit_lock_ = true
+
+[node name="FootLeft" type="Polygon2D" parent="Body"]
+show_behind_parent = true
+color = Color(0.34902, 0.74902, 1, 1)
+polygon = PackedVector2Array(-8, -16, 8, -16, 8, -8, -8, -8)
+
+[node name="FootRight" type="Polygon2D" parent="Body"]
+show_behind_parent = true
+color = Color(0.34902, 0.74902, 1, 1)
+polygon = PackedVector2Array(-8, 8, 8, 8, 8, 16, -8, 16)
+
+[node name="Gun" type="Polygon2D" parent="Body"]
+show_behind_parent = true
+position = Vector2(18, 13)
+color = Color(0.933333, 1, 0.768627, 1)
+polygon = PackedVector2Array(-10, -3, 0, -3, 0, 3, -10, 3)
+
+[node name="Head" type="Polygon2D" parent="Body"]
+color = Color(0.266667, 0.666667, 1, 1)
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_6fm66")
+}
