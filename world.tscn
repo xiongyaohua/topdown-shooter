@@ -1,10 +1,63 @@
-[gd_scene load_steps=2 format=3 uid="uid://b2lvgyma5tocx"]
+[gd_scene load_steps=6 format=3 uid="uid://b2lvgyma5tocx"]
 
 [ext_resource type="PackedScene" uid="uid://dftaxyvi8c7gh" path="res://player.tscn" id="1_3x6ce"]
+[ext_resource type="Texture2D" uid="uid://cy4xsiqx16rax" path="res://icon.svg" id="2_wnl6b"]
+
+[sub_resource type="GDScript" id="GDScript_56o48"]
+script/source = "extends Node2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	$Camera2D.target = $Player
+
+
+"
+
+[sub_resource type="GDScript" id="GDScript_3en4e"]
+script/source = "extends Camera2D
+
+var target: Node2D = null
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+func _physics_process(delta):
+	if target:
+		position = target.position
+		
+"
+
+[sub_resource type="GDScript" id="GDScript_1fqsf"]
+script/source = "extends Node2D
+
+var Bullet := preload(\"res://bullet.tscn\")
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+func _on_player_fire_bullet(transform):
+	var bullet := Bullet.instantiate()
+	bullet.transform = transform
+	add_child(bullet)
+"
 
 [node name="World" type="Node2D"]
+script = SubResource("GDScript_56o48")
 
 [node name="Player" parent="." instance=ExtResource("1_3x6ce")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-current = true
+script = SubResource("GDScript_3en4e")
+
+[node name="BulletManager" type="Node2D" parent="."]
+script = SubResource("GDScript_1fqsf")
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(311, 109)
+texture = ExtResource("2_wnl6b")
+
+[connection signal="fire_bullet" from="Player" to="BulletManager" method="_on_player_fire_bullet"]

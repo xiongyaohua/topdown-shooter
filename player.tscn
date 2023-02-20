@@ -17,7 +17,10 @@ func _physics_process(delta):
 
 func _unhandled_input(event):
 	if event.is_action_pressed(\"fire\"):
-		fire_bullet.emit()
+		$Body/Gun.visible = true
+		fire_bullet.emit($Body/Gun.global_transform)
+	if event.is_action_released(\"fire\"):
+		$Body/Gun.visible = false
 
 func update_movement():
 	var target_velocity := Vector2.ZERO
@@ -39,7 +42,7 @@ func update_movement():
 		player.play(\"RESET\")
 	else:
 		player.play(\"walk\")
-		player.playback_speed = velocity.length() / 80.0
+		player.speed_scale = velocity.length() / 80.0
 	
 func update_rotation():
 	look_at(get_global_mouse_position())
@@ -49,52 +52,6 @@ func update_rotation():
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_egvc0"]
 radius = 8.0
 height = 46.0
-
-[sub_resource type="Animation" id="Animation_h7cao"]
-resource_name = "walk"
-length = 2.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Body/FootLeft:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(5, 0), Vector2(0, 0), Vector2(-3, 0), Vector2(0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Body/FootRight:position")
-tracks/1/interp = 2
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(-3, 0), Vector2(0, 0), Vector2(5, 0), Vector2(0, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_sxluk"]
-resource_name = "idle"
-length = 2.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Body:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [0.0, 0.349066, 0.0, -0.349066, 0.0]
-}
 
 [sub_resource type="Animation" id="Animation_noef7"]
 length = 0.001
@@ -135,6 +92,52 @@ tracks/2/keys = {
 "values": [Vector2(0, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_sxluk"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.349066, 0.0, -0.349066, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_h7cao"]
+resource_name = "walk"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body/FootLeft:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(5, 0), Vector2(0, 0), Vector2(-3, 0), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Body/FootRight:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-3, 0), Vector2(0, 0), Vector2(5, 0), Vector2(0, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6fm66"]
 _data = {
 "RESET": SubResource("Animation_noef7"),
@@ -166,6 +169,7 @@ color = Color(0.34902, 0.74902, 1, 1)
 polygon = PackedVector2Array(-8, 8, 8, 8, 8, 16, -8, 16)
 
 [node name="Gun" type="Polygon2D" parent="Body"]
+visible = false
 show_behind_parent = true
 position = Vector2(18, 13)
 color = Color(0.933333, 1, 0.768627, 1)
