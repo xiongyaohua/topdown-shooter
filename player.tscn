@@ -46,7 +46,11 @@ func update_movement():
 		player.speed_scale = velocity.length() / 80.0
 	
 func update_rotation():
-	look_at(get_global_mouse_position())
+	var v := get_global_mouse_position() - global_position
+	var alpha := acos(13/v.length())
+	if alpha > PI/3.0:
+		v = v.rotated(alpha - PI/2.0)
+	look_at(global_position + v)
 	
 
 

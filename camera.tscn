@@ -28,7 +28,10 @@ func _physics_process(delta):
 		trauma = max(trauma - decay*delta, 0.0)
 		
 func add_trauma(amount, max=1.0):
-	trauma = min(trauma + amount, max)
+	if trauma < max:
+		trauma = min(trauma + amount, max)
+	
+	trauma = min(trauma, 1.0)
 	
 func shake():
 	if noise:
