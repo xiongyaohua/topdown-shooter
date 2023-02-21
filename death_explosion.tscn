@@ -1,0 +1,60 @@
+[gd_scene load_steps=7 format=3 uid="uid://ei37ogmixcl8"]
+
+[sub_resource type="Gradient" id="Gradient_nkkim"]
+offsets = PackedFloat32Array(0, 0.325123, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.552941, 1, 1, 1, 0.572549)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_gvjxv"]
+gradient = SubResource("Gradient_nkkim")
+
+[sub_resource type="Curve" id="Curve_uecqh"]
+_data = [Vector2(0, 1), 0.0, -0.611023, 0, 0, Vector2(0.315789, 0.521472), -0.459193, -0.459193, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_aipwd"]
+curve = SubResource("Curve_uecqh")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_g85ew"]
+emission_shape = 1
+emission_sphere_radius = 5.94
+particle_flag_disable_z = true
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 100.0
+initial_velocity_max = 120.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+damping_min = 100.0
+damping_max = 100.0
+scale_min = 4.0
+scale_max = 6.0
+scale_curve = SubResource("CurveTexture_aipwd")
+color = Color(0.992157, 0.870588, 0.847059, 1)
+color_ramp = SubResource("GradientTexture1D_gvjxv")
+hue_variation_min = -0.1
+hue_variation_max = 0.1
+attractor_interaction_enabled = false
+
+[sub_resource type="GDScript" id="GDScript_saenp"]
+script/source = "extends GPUParticles2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	var tween = create_tween()
+	tween.tween_callback(clear).set_delay(1)
+
+func clear():
+	#print(\"clear\")
+	queue_free()
+"
+
+[node name="DeathExplosion" type="GPUParticles2D"]
+emitting = false
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_g85ew")
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.79
+randomness = 0.2
+script = SubResource("GDScript_saenp")

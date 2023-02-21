@@ -17,6 +17,12 @@ func _ready():
 func _on_player_fire_bullet(transform):
 	$BulletManager.fire(transform)
 	$Camera.add_trauma(0.2, 0.3)
+
+
+func _on_monster_death(transform, explosion):
+	add_child(explosion)
+	explosion.global_transform = transform
+	explosion.emitting = true
 "
 
 [sub_resource type="Environment" id="Environment_v7shs"]
@@ -61,3 +67,4 @@ script = SubResource("GDScript_1fqsf")
 position = Vector2(366, -53)
 
 [connection signal="fire_bullet" from="Player" to="." method="_on_player_fire_bullet"]
+[connection signal="death" from="Monster" to="." method="_on_monster_death"]

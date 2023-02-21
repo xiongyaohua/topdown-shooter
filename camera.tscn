@@ -37,7 +37,6 @@ func shake():
 		rotation = max_roll * amount * noise.get_noise_2d(0, noise_y)
 		offset.x = max_offset.x * amount * noise.get_noise_2d(0, noise_y)
 		offset.y = max_offset.y * amount * noise.get_noise_2d(0, noise_y)
-		print(offset)
 "
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ocpi4"]
