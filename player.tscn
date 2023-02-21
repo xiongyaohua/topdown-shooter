@@ -62,6 +62,7 @@ height = 46.0
 script/source = "extends Polygon2D
 
 @export var interval := 0.1
+@export var disperse := 0.1
 
 @onready var timer := $Timer
 
@@ -72,15 +73,17 @@ func _ready():
 	pass # Replace with function body.
 
 func start():
-	fire_bullet.emit(global_transform)
+	fire()
 	timer.start(interval)
 	
 func stop():
 	timer.stop()
 
+func fire():
+	fire_bullet.emit(global_transform.rotated_local(randf_range(-disperse, disperse)))
 
 func _on_timer_timeout():
-	fire_bullet.emit(global_transform)
+	fire()
 "
 
 [sub_resource type="Animation" id="Animation_noef7"]
