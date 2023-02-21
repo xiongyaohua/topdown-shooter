@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://b2lvgyma5tocx"]
+[gd_scene load_steps=8 format=3 uid="uid://b2lvgyma5tocx"]
 
 [ext_resource type="PackedScene" uid="uid://dftaxyvi8c7gh" path="res://player.tscn" id="1_3x6ce"]
-[ext_resource type="Texture2D" uid="uid://cy4xsiqx16rax" path="res://icon.svg" id="2_wnl6b"]
+[ext_resource type="PackedScene" uid="uid://cmp2w3c3ngstb" path="res://stage.tscn" id="3_pfher"]
+[ext_resource type="PackedScene" uid="uid://cmnvrn4vf7bj0" path="res://monster.tscn" id="3_vabds"]
 
 [sub_resource type="GDScript" id="GDScript_56o48"]
 script/source = "extends Node2D
@@ -10,9 +11,17 @@ script/source = "extends Node2D
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$Camera2D.target = $Player
+	$Monster.target = $Player
 
 
 "
+
+[sub_resource type="Environment" id="Environment_v7shs"]
+background_mode = 3
+glow_enabled = true
+glow_normalized = true
+glow_strength = 1.37
+glow_blend_mode = 0
 
 [sub_resource type="GDScript" id="GDScript_3en4e"]
 script/source = "extends Camera2D
@@ -48,6 +57,9 @@ func _on_player_fire_bullet(transform):
 [node name="World" type="Node2D"]
 script = SubResource("GDScript_56o48")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_v7shs")
+
 [node name="Player" parent="." instance=ExtResource("1_3x6ce")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -56,8 +68,10 @@ script = SubResource("GDScript_3en4e")
 [node name="BulletManager" type="Node2D" parent="."]
 script = SubResource("GDScript_1fqsf")
 
-[node name="Icon" type="Sprite2D" parent="."]
-position = Vector2(311, 109)
-texture = ExtResource("2_wnl6b")
+[node name="Monster" parent="." instance=ExtResource("3_vabds")]
+position = Vector2(366, -53)
+
+[node name="Stage" parent="." instance=ExtResource("3_pfher")]
+position = Vector2(403, -15)
 
 [connection signal="fire_bullet" from="Player" to="BulletManager" method="_on_player_fire_bullet"]

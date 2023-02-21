@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cmp2w3c3ngstb"]
+
+[node name="Stage" type="StaticBody2D"]
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.168627, 0.137255, 0.113725, 1)
+invert_enabled = true
+polygon = PackedVector2Array(-853, -409, -68, -514, 757, -433, 824, -31, 782, 443, 261, 430, -259, 564, -812, 574, -918, 62)

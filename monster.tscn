@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmnvrn4vf7bj0"]
+
+[sub_resource type="GDScript" id="GDScript_8kj7y"]
+script/source = "extends CharacterBody2D
+
+
+@export var speed = 200.0
+
+var target: Node2D = null
+
+func _physics_process(delta):
+	if target:
+		update_movement()
+		update_rotation()
+		move_and_slide()
+		
+func update_movement():
+	var target_velocity := (target.position - position).normalized()
+	target_velocity *= speed
+	velocity = lerp(velocity, target_velocity, 0.3)
+	
+	
+func update_rotation():
+	var target_rotation := (target.position - position).angle()
+	rotation = lerpf(rotation, target_rotation, 0.3)
+"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ms8ly"]
+radius = 9.0
+height = 18.0
+
+[node name="Monster" type="CharacterBody2D"]
+script = SubResource("GDScript_8kj7y")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_ms8ly")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.988235, 0.513726, 0.403922, 1)
+polygon = PackedVector2Array(-9, -9, 9, -5, 9, 6, -9, 9)

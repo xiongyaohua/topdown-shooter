@@ -16,11 +16,14 @@ func _process(delta):
 	
 func _physics_process(delta):
 	position += speed * transform.x * delta
+
+func _on_body_entered(body):
+	queue_free()
 "
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2qx1y"]
-radius = 3.0
-height = 22.0
+radius = 1.0
+height = 6.0
 
 [node name="Bullet" type="Area2D"]
 script = SubResource("GDScript_yyyo4")
@@ -31,5 +34,8 @@ rotation = 1.5708
 shape = SubResource("CapsuleShape2D_2qx1y")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
+scale = Vector2(0.3, 0.3)
 color = Color(1, 0.843137, 0.576471, 1)
 polygon = PackedVector2Array(11, 0, 7, -3, -10, -3, -10, 3, 7, 3)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

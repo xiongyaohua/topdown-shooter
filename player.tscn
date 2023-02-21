@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dftaxyvi8c7gh"]
+[gd_scene load_steps=8 format=3 uid="uid://dftaxyvi8c7gh"]
 
 [sub_resource type="GDScript" id="GDScript_elot1"]
 script/source = "extends CharacterBody2D
@@ -18,8 +18,9 @@ func _physics_process(delta):
 func _unhandled_input(event):
 	if event.is_action_pressed(\"fire\"):
 		$Body/Gun.visible = true
-		fire_bullet.emit($Body/Gun.global_transform)
+		$Body/Gun.start()
 	if event.is_action_released(\"fire\"):
+		$Body/Gun.stop()
 		$Body/Gun.visible = false
 
 func update_movement():
@@ -47,11 +48,40 @@ func update_movement():
 func update_rotation():
 	look_at(get_global_mouse_position())
 	
+
+
+func _on_gun_fire_bullet(transform):
+	fire_bullet.emit(transform)
 "
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_egvc0"]
 radius = 8.0
 height = 46.0
+
+[sub_resource type="GDScript" id="GDScript_yi0ph"]
+script/source = "extends Polygon2D
+
+@export var interval := 0.1
+
+@onready var timer := $Timer
+
+signal fire_bullet(transform: Transform2D)
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+func start():
+	fire_bullet.emit(global_transform)
+	timer.start(interval)
+	
+func stop():
+	timer.stop()
+
+
+func _on_timer_timeout():
+	fire_bullet.emit(global_transform)
+"
 
 [sub_resource type="Animation" id="Animation_noef7"]
 length = 0.001
@@ -174,6 +204,10 @@ show_behind_parent = true
 position = Vector2(18, 13)
 color = Color(0.933333, 1, 0.768627, 1)
 polygon = PackedVector2Array(-10, -3, 0, -3, 0, 3, -10, 3)
+script = SubResource("GDScript_yi0ph")
+
+[node name="Timer" type="Timer" parent="Body/Gun"]
+process_callback = 0
 
 [node name="Head" type="Polygon2D" parent="Body"]
 color = Color(0.266667, 0.666667, 1, 1)
@@ -183,3 +217,6 @@ polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 libraries = {
 "": SubResource("AnimationLibrary_6fm66")
 }
+
+[connection signal="fire_bullet" from="Body/Gun" to="." method="_on_gun_fire_bullet"]
+[connection signal="timeout" from="Body/Gun/Timer" to="Body/Gun" method="_on_timer_timeout"]
