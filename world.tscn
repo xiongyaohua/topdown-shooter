@@ -1,6 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://b2lvgyma5tocx"]
 
 [ext_resource type="PackedScene" uid="uid://dftaxyvi8c7gh" path="res://player.tscn" id="1_3x6ce"]
+[ext_resource type="PackedScene" uid="uid://de8400b53dsqj" path="res://camera.tscn" id="3_5o7i2"]
 [ext_resource type="PackedScene" uid="uid://cmp2w3c3ngstb" path="res://stage.tscn" id="3_pfher"]
 [ext_resource type="PackedScene" uid="uid://cmnvrn4vf7bj0" path="res://monster.tscn" id="3_vabds"]
 
@@ -10,10 +11,12 @@ script/source = "extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Camera2D.target = $Player
+	$Camera.target = $Player
 	$Monster.target = $Player
 
-
+func _on_player_fire_bullet(transform):
+	$BulletManager.fire(transform)
+	$Camera.add_trauma(0.2, 0.3)
 "
 
 [sub_resource type="Environment" id="Environment_v7shs"]
@@ -22,22 +25,6 @@ glow_enabled = true
 glow_normalized = true
 glow_strength = 1.37
 glow_blend_mode = 0
-
-[sub_resource type="GDScript" id="GDScript_3en4e"]
-script/source = "extends Camera2D
-
-var target: Node2D = null
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-func _physics_process(delta):
-	if target:
-		position = target.position
-		
-"
 
 [sub_resource type="GDScript" id="GDScript_1fqsf"]
 script/source = "extends Node2D
@@ -48,7 +35,7 @@ var Bullet := preload(\"res://bullet.tscn\")
 func _ready():
 	pass # Replace with function body.
 
-func _on_player_fire_bullet(transform):
+func fire(transform):
 	var bullet := Bullet.instantiate()
 	bullet.transform = transform
 	add_child(bullet)
@@ -60,10 +47,12 @@ script = SubResource("GDScript_56o48")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_v7shs")
 
+[node name="Stage" parent="." instance=ExtResource("3_pfher")]
+position = Vector2(403, -15)
+
 [node name="Player" parent="." instance=ExtResource("1_3x6ce")]
 
-[node name="Camera2D" type="Camera2D" parent="."]
-script = SubResource("GDScript_3en4e")
+[node name="Camera" parent="." instance=ExtResource("3_5o7i2")]
 
 [node name="BulletManager" type="Node2D" parent="."]
 script = SubResource("GDScript_1fqsf")
@@ -71,7 +60,4 @@ script = SubResource("GDScript_1fqsf")
 [node name="Monster" parent="." instance=ExtResource("3_vabds")]
 position = Vector2(366, -53)
 
-[node name="Stage" parent="." instance=ExtResource("3_pfher")]
-position = Vector2(403, -15)
-
-[connection signal="fire_bullet" from="Player" to="BulletManager" method="_on_player_fire_bullet"]
+[connection signal="fire_bullet" from="Player" to="." method="_on_player_fire_bullet"]

@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=3 uid="uid://de8400b53dsqj"]
+
+[sub_resource type="GDScript" id="GDScript_3en4e"]
+script/source = "extends Camera2D
+
+@export var decay := 0.8
+@export var max_offset := Vector2(50.0, 50.0)
+@export var max_roll := 0.1
+@export var noise: FastNoiseLite
+
+var target: Node2D = null
+
+var trauma := 0.0
+var noise_y := 0
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	if noise:
+		randomize()
+		noise.seed = randi()
+
+func _physics_process(delta):
+	if target:
+		var v := get_global_mouse_position() - target.global_position
+		position = target.global_position + v*0.2
+	if trauma:
+		shake()
+		trauma = max(trauma - decay*delta, 0.0)
+		
+func add_trauma(amount, max=1.0):
+	trauma = min(trauma + amount, max)
+	
+func shake():
+	if noise:
+		var amount = pow(trauma, 2)
+		noise_y += 1
+		rotation = max_roll * amount * noise.get_noise_2d(0, noise_y)
+		offset.x = max_offset.x * amount * noise.get_noise_2d(0, noise_y)
+		offset.y = max_offset.y * amount * noise.get_noise_2d(0, noise_y)
+		print(offset)
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ocpi4"]
+frequency = 0.25
+fractal_octaves = 2
+
+[node name="Camera" type="Camera2D"]
+position_smoothing_enabled = true
+position_smoothing_speed = 3.0
+script = SubResource("GDScript_3en4e")
+noise = SubResource("FastNoiseLite_ocpi4")
