@@ -29,7 +29,7 @@ damping_max = 100.0
 scale_min = 4.0
 scale_max = 6.0
 scale_curve = SubResource("CurveTexture_aipwd")
-color = Color(0.992157, 0.870588, 0.847059, 1)
+color = Color(0.968627, 0.537255, 0.458824, 1)
 color_ramp = SubResource("GradientTexture1D_gvjxv")
 hue_variation_min = -0.1
 hue_variation_max = 0.1
@@ -50,6 +50,7 @@ func clear():
 "
 
 [node name="DeathExplosion" type="GPUParticles2D"]
+self_modulate = Color(1.5, 1.5, 1.5, 1)
 emitting = false
 amount = 32
 process_material = SubResource("ParticleProcessMaterial_g85ew")

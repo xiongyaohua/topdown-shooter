@@ -23,8 +23,9 @@ func _on_player_fire_bullet(transform):
 background_mode = 3
 glow_enabled = true
 glow_normalized = true
-glow_strength = 1.37
-glow_blend_mode = 0
+glow_strength = 1.2
+glow_blend_mode = 1
+glow_hdr_threshold = 1.2
 
 [sub_resource type="GDScript" id="GDScript_1fqsf"]
 script/source = "extends Node2D
