@@ -6,8 +6,8 @@
 script/source = "extends CharacterBody2D
 
 
-@export var speed := 200.0
-@export var life := 100.0
+@export var speed := 100.0
+@export var life := 50.0
 @export var Explosion: PackedScene = null
 
 signal death(transform: Transform2D, explosion: Node2D)
