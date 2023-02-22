@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b2lvgyma5tocx"]
+[gd_scene load_steps=11 format=3 uid="uid://b2lvgyma5tocx"]
 
 [ext_resource type="PackedScene" uid="uid://dftaxyvi8c7gh" path="res://player.tscn" id="1_3x6ce"]
 [ext_resource type="PackedScene" uid="uid://de8400b53dsqj" path="res://camera.tscn" id="3_5o7i2"]
@@ -14,7 +14,7 @@ func _ready():
 	$MonsterManager.target = $Player
 	
 	$BulletManager.camera = $Camera
-
+	$MonsterManager.gui = $GUI
 "
 
 [sub_resource type="Environment" id="Environment_v7shs"]
@@ -68,6 +68,7 @@ script/source = "extends Node2D
 @export var Monster: PackedScene
 
 var target = null
+var gui = null
 
 func _ready():
 	var tween = create_tween().set_loops()
@@ -94,7 +95,26 @@ func _on_monster_death(transform, explosion):
 	add_child(explosion)
 	explosion.global_transform = transform
 	explosion.emitting = true
+	
+	gui.add_kill()
 "
+
+[sub_resource type="GDScript" id="GDScript_0h6ft"]
+script/source = "extends CanvasLayer
+
+var kill := 0
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	$Label.text = \"KILL: {0}\".format([kill])
+
+func add_kill():
+	kill += 1
+	$Label.text = \"KILL: {0}\".format([kill])
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_3rjts"]
+font_size = 32
 
 [node name="World" type="Node2D"]
 script = SubResource("GDScript_56o48")
@@ -115,6 +135,17 @@ script = SubResource("GDScript_1fqsf")
 [node name="MonsterManager" type="Node2D" parent="."]
 script = SubResource("GDScript_s86d8")
 Monster = ExtResource("3_vabds")
+
+[node name="GUI" type="CanvasLayer" parent="."]
+script = SubResource("GDScript_0h6ft")
+
+[node name="Label" type="Label" parent="GUI"]
+offset_left = 57.0
+offset_top = 37.0
+offset_right = 130.0
+offset_bottom = 85.0
+text = "KILL:"
+label_settings = SubResource("LabelSettings_3rjts")
 
 [connection signal="fire_bullet" from="Player" to="BulletManager" method="_on_player_fire_bullet"]
 [connection signal="throw_grenade" from="Player" to="BulletManager" method="_on_player_throw_grenade"]
