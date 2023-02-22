@@ -21,7 +21,7 @@ func _ready():
 background_mode = 3
 glow_enabled = true
 glow_normalized = true
-glow_strength = 1.2
+glow_bloom = 0.14
 glow_blend_mode = 1
 glow_hdr_threshold = 1.2
 
@@ -91,8 +91,10 @@ func spawn():
 	monster.position = p
 	monster.target = target
 
-func _on_monster_death(transform, explosion):
+func _on_monster_death(transform, explosion, stain):
 	add_child(explosion)
+	add_child(stain)
+	stain.global_transform = transform
 	explosion.global_transform = transform
 	explosion.emitting = true
 	
@@ -123,6 +125,7 @@ script = SubResource("GDScript_56o48")
 environment = SubResource("Environment_v7shs")
 
 [node name="Stage" parent="." instance=ExtResource("3_pfher")]
+z_index = -100
 position = Vector2(403, -15)
 
 [node name="Player" parent="." instance=ExtResource("1_3x6ce")]

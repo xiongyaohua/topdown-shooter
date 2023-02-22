@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhaj7erfbjr08"]
+
+[sub_resource type="GDScript" id="GDScript_chrt3"]
+script/source = "extends Polygon2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	var tween := create_tween()
+	tween.tween_property(self, \"modulate:a\", 0.0, 3)
+	tween.tween_callback(queue_free)
+
+
+"
+
+[node name="BloodStain" type="Polygon2D"]
+z_index = -1
+position = Vector2(241, 195)
+color = Color(0, 0.854902, 0.152941, 0.403922)
+polygon = PackedVector2Array(-29, -43, -83, 0, -28, 71, 90, 40, 68, -38)
+script = SubResource("GDScript_chrt3")

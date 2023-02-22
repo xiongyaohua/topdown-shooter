@@ -1,6 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cmnvrn4vf7bj0"]
-
-[ext_resource type="PackedScene" uid="uid://ei37ogmixcl8" path="res://death_explosion.tscn" id="1_ltxa0"]
+[gd_scene load_steps=6 format=3 uid="uid://cmnvrn4vf7bj0"]
 
 [sub_resource type="GDScript" id="GDScript_8kj7y"]
 script/source = "extends CharacterBody2D
@@ -8,9 +6,10 @@ script/source = "extends CharacterBody2D
 
 @export var speed := 100.0
 @export var life := 50.0
-@export var Explosion: PackedScene = null
+const Explosion := preload(\"res://death_explosion.tscn\")
+const Stain := preload(\"res://blood_stain.tscn\")
 
-signal death(transform: Transform2D, explosion: Node2D)
+signal death(transform: Transform2D, explosion, stain)
 
 var target: Node2D = null
 
@@ -38,7 +37,8 @@ func hurt(amount:float=10.0):
 func die():
 	if Explosion:
 		var explosion = Explosion.instantiate()
-		death.emit(global_transform, explosion)
+		var stain = Stain.instantiate()
+		death.emit(global_transform, explosion, stain)
 		
 	queue_free()
 "
@@ -86,7 +86,6 @@ _data = {
 
 [node name="Monster" type="CharacterBody2D" groups=["Damage"]]
 script = SubResource("GDScript_8kj7y")
-Explosion = ExtResource("1_ltxa0")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ms8ly")
