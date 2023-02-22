@@ -8,12 +8,14 @@ script/source = "extends CharacterBody2D
 @export var life := 50.0
 const Explosion := preload(\"res://death_explosion.tscn\")
 const Stain := preload(\"res://blood_stain.tscn\")
+const Text := preload(\"res://damage_text.tscn\")
 
 signal death(transform: Transform2D, explosion, stain)
 
 var target: Node2D = null
+var manager = null
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if target:
 		update_movement()
 		update_rotation()
@@ -31,6 +33,11 @@ func update_rotation():
 func hurt(amount:float=10.0):
 	$AnimationPlayer.play(\"take_damage\")
 	life -= amount
+	var text = Text.instantiate()
+	text.position = position
+	text.set_amount(amount)
+	manager.add_child(text)
+	
 	if life <= 0.0:
 		die()
 		

@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://lhp3p51vtrn0"]
+
+[sub_resource type="GDScript" id="GDScript_iwjhm"]
+script/source = "extends Node2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	var tween := create_tween()
+	tween.tween_property(self, \"modulate:a\", 0.0, 1)
+	tween.parallel().tween_property(self, \"position:y\", position.y - 50, 1)
+	tween.tween_callback(queue_free)
+	
+func set_amount(amount):
+	$Label.text = str(int(amount))
+
+
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_pvhoi"]
+font_color = Color(1, 0.286275, 0.345098, 1)
+outline_size = 2
+outline_color = Color(0.992157, 0.988235, 1, 1)
+
+[node name="DamageText" type="Node2D"]
+z_index = 50
+position = Vector2(211, 136)
+script = SubResource("GDScript_iwjhm")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -13.0
+offset_right = 20.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "12345678"
+label_settings = SubResource("LabelSettings_pvhoi")
+horizontal_alignment = 1
+vertical_alignment = 1

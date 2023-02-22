@@ -13,7 +13,7 @@ script/source = "extends CharacterBody2D
 signal fire_bullet(transform: Transform2D)
 signal throw_grenade(from: Vector2, to: Vector2)
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	update_movement()
 	update_rotation()
 	move_and_slide()
@@ -57,8 +57,8 @@ func update_rotation():
 		v = v.rotated(alpha - PI/2.0)
 	look_at(global_position + v)
 
-func _on_gun_fire_bullet(transform):
-	fire_bullet.emit(transform)
+func _on_gun_fire_bullet(p_transform):
+	fire_bullet.emit(p_transform)
 
 func _on_grenade_thrower_throw_grenade(from, to):
 	throw_grenade.emit(from, to)

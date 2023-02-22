@@ -90,6 +90,7 @@ func spawn():
 	add_child(monster)
 	monster.position = p
 	monster.target = target
+	monster.manager = self
 
 func _on_monster_death(transform, explosion, stain):
 	add_child(explosion)
