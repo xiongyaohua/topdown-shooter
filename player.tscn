@@ -1,14 +1,17 @@
-[gd_scene load_steps=8 format=3 uid="uid://dftaxyvi8c7gh"]
+[gd_scene load_steps=9 format=3 uid="uid://dftaxyvi8c7gh"]
+
+[ext_resource type="PackedScene" uid="uid://bmfvegu6l8wsx" path="res://grenade_thrower.tscn" id="1_j4nvy"]
 
 [sub_resource type="GDScript" id="GDScript_elot1"]
 script/source = "extends CharacterBody2D
 
 
-@export var speed := 300.0
+@export var speed := 200.0
 @export var agility := 0.5
 @onready var player := $AnimationPlayer
 
 signal fire_bullet(transform: Transform2D)
+signal throw_grenade(from: Vector2, to: Vector2)
 
 func _physics_process(delta):
 	update_movement()
@@ -17,11 +20,13 @@ func _physics_process(delta):
 
 func _unhandled_input(event):
 	if event.is_action_pressed(\"fire\"):
-		$Body/Gun.visible = true
 		$Body/Gun.start()
 	if event.is_action_released(\"fire\"):
 		$Body/Gun.stop()
-		$Body/Gun.visible = false
+	if event.is_action_pressed(\"grenade\"):
+		var v = get_global_mouse_position() - global_position
+		if v.length() > 20.0 and v.length() < 500.0:
+			$Body/GrenadeThrower.throw(get_global_mouse_position())
 
 func update_movement():
 	var target_velocity := Vector2.ZERO
@@ -51,11 +56,12 @@ func update_rotation():
 	if alpha > PI/3.0:
 		v = v.rotated(alpha - PI/2.0)
 	look_at(global_position + v)
-	
-
 
 func _on_gun_fire_bullet(transform):
 	fire_bullet.emit(transform)
+
+func _on_grenade_thrower_throw_grenade(from, to):
+	throw_grenade.emit(from, to)
 "
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_egvc0"]
@@ -77,10 +83,12 @@ func _ready():
 	pass # Replace with function body.
 
 func start():
+	visible = true
 	fire()
 	timer.start(interval)
 	
 func stop():
+	visible = false
 	timer.stop()
 
 func fire():
@@ -220,6 +228,10 @@ process_callback = 0
 color = Color(0.266667, 0.666667, 1, 1)
 polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 
+[node name="GrenadeThrower" parent="Body" instance=ExtResource("1_j4nvy")]
+position = Vector2(1, 18)
+rotation = -0.460502
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_6fm66")
@@ -227,3 +239,4 @@ libraries = {
 
 [connection signal="fire_bullet" from="Body/Gun" to="." method="_on_gun_fire_bullet"]
 [connection signal="timeout" from="Body/Gun/Timer" to="Body/Gun" method="_on_timer_timeout"]
+[connection signal="throw_grenade" from="Body/GrenadeThrower" to="." method="_on_grenade_thrower_throw_grenade"]

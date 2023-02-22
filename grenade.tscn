@@ -1,0 +1,224 @@
+[gd_scene load_steps=11 format=3 uid="uid://dvp14lqsjssy4"]
+
+[sub_resource type="GDScript" id="GDScript_uj00h"]
+script/source = "extends Node2D
+
+@export var speed := 300.0
+
+var from: Vector2 = Vector2(30, 30)
+var to: Vector2 = Vector2(100, 100)
+var life := 0.0
+var total_life
+
+signal blow
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	var length = (from - to).length()
+	if length:
+		position = from
+		total_life = length / speed
+		life = total_life
+
+func _physics_process(delta):
+	life -= delta
+	position = to + life/total_life * (from - to)
+	if life < 0.0:
+		set_physics_process(false)
+		explode()
+		
+func explode():
+	for body in $Damage.get_overlapping_bodies():
+		if body.is_in_group(\"Damage\"):
+			body.hurt(50.0)
+	
+	blow.emit()
+	$AnimationPlayer.play(\"blow\")
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_s8tu3"]
+radius = 40.0
+
+[sub_resource type="Gradient" id="Gradient_f6apx"]
+offsets = PackedFloat32Array(0, 0.509677, 0.819355)
+colors = PackedColorArray(1, 0.748782, 0.544393, 1, 0.825, 0.410589, 0.220046, 1, 0.156863, 0.156863, 0.156863, 0.639216)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_iaahg"]
+gradient = SubResource("Gradient_f6apx")
+
+[sub_resource type="Curve" id="Curve_f1ove"]
+_data = [Vector2(0, 0.140794), 0.0, 1.23998, 0, 0, Vector2(0.353093, 0.559567), 0.933815, 0.933815, 0, 0, Vector2(1, 1), 0.690211, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_0jp6a"]
+curve = SubResource("Curve_f1ove")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_oby33"]
+emission_shape = 1
+emission_sphere_radius = 4.46
+particle_flag_disable_z = true
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 150.0
+initial_velocity_max = 180.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+damping_min = 300.0
+damping_max = 300.0
+scale_min = 8.0
+scale_max = 8.0
+scale_curve = SubResource("CurveTexture_0jp6a")
+color_ramp = SubResource("GradientTexture1D_iaahg")
+hue_variation_min = -0.05
+hue_variation_max = 0.05
+
+[sub_resource type="Animation" id="Animation_81uv2"]
+resource_name = "blow"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Polygon2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(10, 10)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Polygon2D:color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.87451, 0.596078, 0.345098, 1), Color(1, 0.894118, 0.831373, 0.67451)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("GPUParticles2D:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.9),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Polygon2D:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_7lkul"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Polygon2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Polygon2D:color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.87451, 0.596078, 0.345098, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("GPUParticles2D:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Polygon2D:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t5afx"]
+_data = {
+"RESET": SubResource("Animation_7lkul"),
+"blow": SubResource("Animation_81uv2")
+}
+
+[node name="Grenade" type="Node2D"]
+script = SubResource("GDScript_uj00h")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.87451, 0.596078, 0.345098, 1)
+polygon = PackedVector2Array(-2, -4, 2, -4, 4, -1, 4, 2, 2, 4, -2, 4, -4, 2, -4, -2)
+
+[node name="Damage" type="Area2D" parent="."]
+input_pickable = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage"]
+shape = SubResource("CircleShape2D_s8tu3")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_oby33")
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.9
+randomness = 0.19
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_t5afx")
+}

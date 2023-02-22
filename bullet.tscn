@@ -24,20 +24,18 @@ func _on_body_entered(body):
 	queue_free()
 "
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2qx1y"]
-radius = 1.0
-height = 6.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dsw82"]
+size = Vector2(4, 1)
 
 [node name="Bullet" type="Area2D"]
 script = SubResource("GDScript_yyyo4")
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_2qx1y")
+shape = SubResource("RectangleShape2D_dsw82")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
-scale = Vector2(0.3, 0.3)
+scale = Vector2(0.2, 0.2)
 color = Color(1, 0.843137, 0.576471, 1)
 polygon = PackedVector2Array(11, 0, 7, -3, -10, -3, -10, 3, 7, 3)
 

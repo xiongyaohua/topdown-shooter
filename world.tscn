@@ -12,10 +12,8 @@ script/source = "extends Node2D
 func _ready():
 	$Camera.target = $Player
 	$MonsterManager.target = $Player
-
-func _on_player_fire_bullet(transform):
-	$BulletManager.fire(transform)
-	$Camera.add_trauma(0.2, 0.2)
+	
+	$BulletManager.camera = $Camera
 
 "
 
@@ -31,6 +29,9 @@ glow_hdr_threshold = 1.2
 script/source = "extends Node2D
 
 var Bullet := preload(\"res://bullet.tscn\")
+var Grenade := preload(\"res://grenade.tscn\")
+
+var camera = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -40,6 +41,25 @@ func fire(transform):
 	var bullet := Bullet.instantiate()
 	bullet.transform = transform
 	add_child(bullet)
+
+func grenade(from, to):
+	var v := Grenade.instantiate()
+	v.from = from
+	v.to = to
+	add_child(v)
+	v.blow.connect(_on_grenade_blow)
+
+
+func _on_player_throw_grenade(from, to):
+	grenade(from, to)
+
+
+func _on_player_fire_bullet(transform):
+	fire(transform)
+	camera.add_trauma(0.2, 0.2)
+	
+func _on_grenade_blow():
+	camera.add_trauma(0.4, 1.0)
 "
 
 [sub_resource type="GDScript" id="GDScript_s86d8"]
@@ -96,4 +116,5 @@ script = SubResource("GDScript_1fqsf")
 script = SubResource("GDScript_s86d8")
 Monster = ExtResource("3_vabds")
 
-[connection signal="fire_bullet" from="Player" to="." method="_on_player_fire_bullet"]
+[connection signal="fire_bullet" from="Player" to="BulletManager" method="_on_player_fire_bullet"]
+[connection signal="throw_grenade" from="Player" to="BulletManager" method="_on_player_throw_grenade"]
