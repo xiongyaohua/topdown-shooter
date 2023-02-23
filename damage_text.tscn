@@ -18,7 +18,8 @@ func set_amount(amount):
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_pvhoi"]
-font_color = Color(1, 0.286275, 0.345098, 1)
+font_size = 12
+font_color = Color(1, 0, 0.341176, 1)
 outline_size = 2
 outline_color = Color(0.992157, 0.988235, 1, 1)
 

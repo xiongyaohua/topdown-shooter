@@ -95,7 +95,7 @@ func spawn():
 func _on_monster_death(transform, explosion, stain):
 	add_child(explosion)
 	add_child(stain)
-	stain.global_transform = transform
+	stain.global_position = transform.origin
 	explosion.global_transform = transform
 	explosion.emitting = true
 	

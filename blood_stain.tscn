@@ -6,6 +6,10 @@ script/source = "extends Polygon2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	rotation = randf_range(0.0, 2) * PI
+	var size = randf_range(0.5, 1.0)
+	scale.x = size
+	scale.y = size
 	var tween := create_tween()
 	tween.tween_property(self, \"modulate:a\", 0.0, 3)
 	tween.tween_callback(queue_free)
@@ -16,6 +20,6 @@ func _ready():
 [node name="BloodStain" type="Polygon2D"]
 z_index = -1
 position = Vector2(241, 195)
-color = Color(0, 0.854902, 0.152941, 0.403922)
-polygon = PackedVector2Array(-29, -43, -83, 0, -28, 71, 90, 40, 68, -38)
+color = Color(0.854902, 0.396078, 0.266667, 0.403922)
+polygon = PackedVector2Array(16, -63, -83, 0, -28, 71, 90, 40, 54, -31)
 script = SubResource("GDScript_chrt3")
